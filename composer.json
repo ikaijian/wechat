@@ -1,7 +1,7 @@
 {
     "name": "ikaijian\/wechat",
     "description": "微信 SDK 包含企业微信、微信小程序、微信公众号、微信开放平台、微信支付等微信集合接口",
-    "homepage": "https://codeup.aliyun.com/6343cd6e0e55ca74659804ba/composer/permission.git",
+    "homepage": "https://github.com/ikaijian/wechat.git",
     "keywords": [
         "微信 SDK",
         "Work",
