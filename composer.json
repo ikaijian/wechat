@@ -1,0 +1,44 @@
+{
+    "name": "ikaijian\/wechat",
+    "description": "微信 SDK 包含企业微信、微信小程序、微信公众号、微信开放平台、微信支付等微信集合接口",
+    "homepage": "https://codeup.aliyun.com/6343cd6e0e55ca74659804ba/composer/permission.git",
+    "keywords": [
+        "微信 SDK",
+        "Work",
+        "OffiaAccount",
+        "MiniProgram",
+        "企业微信",
+        "微信小程序",
+        "微信公众号",
+        "微信开放平台",
+        "微信支付"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "ikaijian",
+            "email": "ikaijian@163.com"
+        }
+    ],
+    "require": {
+        "php": "^7.4|^8.0",
+        "pimple/pimple": "^3.5",
+        "guzzlehttp/guzzle": "^7.9"
+    },
+    "require-dev": {
+        "laravel/framework": "^8.83"
+    },
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "Ikaijian\\Wechat\\": "src"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Ikaijian\\Wechat\\WechatServiceProvider"
+            ]
+        }
+    }
+}

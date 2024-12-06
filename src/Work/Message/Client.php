@@ -1,0 +1,200 @@
+<?php
+/**
+ * @Author: chenkaijian <ikaijian@163.com>,
+ * @Date: 2024/12/3 17:49,
+ * @LastEditTime: 2024/12/3  17:49,
+ * @Copyright: 2024 ikaijian Inc. 保留所有权利。
+ */
+
+namespace Ikaijian\Wechat\Work\Message;
+
+use Illuminate\Support\Arr;
+use Ikaijian\Wechat\Kernel\Support\BaseClient;
+
+class Client extends BaseClient
+{
+    /**
+     * @var array
+     */
+    protected $patch;
+
+    /**
+     * @var array
+     */
+    protected $to = ['touser' => '@all'];
+
+    /**
+     * @var int
+     */
+    protected $agentId;
+
+    /**
+     * @var bool
+     */
+    protected $secretive = false;
+
+    /**
+     * @var string
+     */
+    protected $endpointToMessage = 'cgi-bin/message/send';
+
+    /**
+     * @param $message
+     * @return $this
+     */
+    public function setText($message)
+    {
+        $this->patch = [
+            'msgtype' => 'text',
+            'text' => ['content' => $message]
+        ];
+
+        return $this;
+    }
+
+    /**
+     * @param array $message ['title', 'description', 'url']
+     * @param string $btn_txt
+     * @return $this
+     */
+    public function setTextCard(array $message, $btn_txt = '详情')
+    {
+        $this->patch = [
+            'msgtype' => 'textcard',
+            'textcard' => array_merge($message, ['btntxt' => $btn_txt])
+        ];
+
+        return $this;
+    }
+
+    /**
+     * news
+     * @param $message
+     * @return $this
+     */
+    public function setNews($message)
+    {
+        $this->patch = [
+            'msgtype' => 'news',
+            'news' => ['articles' => $message]
+        ];
+
+        return $this;
+    }
+
+    /**
+     * mpnews
+     * @param $message
+     * @return $this
+     */
+    public function setMpNews($message)
+    {
+        $this->patch = [
+            'msgtype' => 'mpnews',
+            'mpnews' => ['articles' => $message]
+        ];
+
+        return $this;
+    }
+
+    /**
+     * markdown
+     * @param $message
+     * @return $this
+     */
+    public function setMarkdown($message)
+    {
+        $this->patch = [
+            'msgtype' => 'markdown',
+            'markdown' => ['content' => $message]
+        ];
+
+        return $this;
+    }
+
+    /**
+     * Template Card Message
+     * @param $message ('text_notice', 'news_notice', 'vote_interaction', 'multiple_interaction')
+     * @return $this
+     */
+    public function setTemplateCard(array $message)
+    {
+        $this->patch = [
+            'msgtype' => 'template_card',
+            'template_card' => $message
+        ];
+
+        return $this;
+    }
+
+    /**
+     * @param $userIds array|string
+     * @return Client
+     */
+    public function toUser($userIds)
+    {
+        return $this->setRecipients($userIds, 'touser');
+    }
+
+    /**
+     * @param $partyIds array|string
+     * @return Client
+     */
+    public function toParty($partyIds)
+    {
+        return $this->setRecipients($partyIds, 'toparty');
+    }
+
+    /**
+     * @param $tagIds array|string
+     * @return $this
+     */
+    public function toTag($tagIds)
+    {
+        return $this->setRecipients($tagIds, 'totag');
+    }
+
+    public function secretive()
+    {
+        $this->secretive = true;
+
+        return $this;
+    }
+
+    /**
+     * @param $agentId
+     * @return $this
+     */
+    public function ofAgent($agentId)
+    {
+        $this->agentId = $agentId;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function send()
+    {
+        $message = array_merge($this->to, $this->patch, [
+            'agentid' => $this->agentId,
+            'safe' => (int)$this->secretive,
+        ]);
+
+        $this->secretive = false;
+
+        return $this->httpPostJson($this->endpointToMessage, $message);
+    }
+
+    protected function setRecipients($ids, $key)
+    {
+        if (is_array($ids)) {
+            $ids = implode('|', $ids);
+        }
+
+        $this->to = Arr::get($this->to, 'touser') === '@all' ? [$key => $ids] : array_merge($this->to, [$key => $ids]);
+
+        return $this;
+    }
+}
